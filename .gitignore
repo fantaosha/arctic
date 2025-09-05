@@ -2,3 +2,5 @@ notebooks_debug/*
 *.pyc
 data/
 slurm/*
+core*
+.vscode/*

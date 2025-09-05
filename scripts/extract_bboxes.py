@@ -10,7 +10,7 @@ from tqdm import tqdm
 
 def extract_bboxes(seq: str):
     data_dir = "/large_experiments/3po/data/arctic/arctic/data/arctic_data/data"
-    save_dir = "/private/home/taoshaf/data/arctic/bboxes"
+    save_dir = "/private/home/taoshaf/data/arctic"
     mocap_dir = os.path.join(data_dir, "mocap_npy")
 
     print(f"Extract bounding boxes for {seq}.")
@@ -75,7 +75,7 @@ def extract_bboxes(seq: str):
         .astype(int)
     )
 
-    bbox_dir = os.path.join(save_dir, seq)
+    bbox_dir = os.path.join(save_dir, seq, "bboxes")
     for cam_idx, cam in enumerate(tqdm(cams)):
         bbox_cam_dir = os.path.join(bbox_dir, cam)
         if not os.path.exists(bbox_cam_dir):
