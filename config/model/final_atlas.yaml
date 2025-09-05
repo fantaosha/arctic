@@ -3,7 +3,7 @@ model:
   _target_: mesh_fitting.optim.model.final_atlas.FinalATLAS
   model_data_dir: ${paths.atlas_dir}/v4.6
 
-  num_shape_comps: 16
+  num_shape_comps: 235
   num_scale_comps: 38
   num_hand_comps: 16
   num_expr_comps: 10
@@ -17,7 +17,9 @@ model:
 shape_param_idxs:
   full:
     - type: range
-      value: [0, 16]
+      value:
+        - 0
+        - ${model.num_shape_comps}
 
 skel_param_idxs:
   limit:

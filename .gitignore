@@ -1,2 +1,4 @@
 notebooks_debug/*
 *.pyc
+data/
+slurm/*
