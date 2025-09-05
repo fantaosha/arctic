@@ -1,0 +1,179 @@
+# @package _global_
+defaults:
+  - override /model: final_atlas
+  - override /factors: keypoint_dense_2d
+
+result_folder: final_atlas/dense/${person}
+result_file: init_single_frame_results.pkl
+
+init_folder: final_atlas/sparse/${person}
+init_file: single_frame_results.pkl
+
+init_damping_ratio: 0.1
+init_damping_const: 0.2
+max_damping_ratio: 250
+batch_size: 600
+
+problem: "init_single_frame_fitting"
+
+shape_pca_weight: 50
+scale_pca_weight: 1.5
+hand_pca_weight: 0.1
+
+optim:
+  init:
+    optimizer:
+      _target_: mesh_fitting.optim.optim.optimize_single_frames
+      _partial_: True
+      init_damping_ratio: ${init_damping_ratio}
+      init_damping_const: ${init_damping_const}
+      max_damping_ratio: ${max_damping_ratio}
+    stages:
+      0:
+        params:
+          skel_params:
+            transform: identity
+            opt_idxs: ${skel_param_idxs.identity.body}
+            shared_idxs: ~
+        factors: ${body_factors.non_pca.s1}
+        max_iters: 3
+      1:
+        params:
+          skel_params:
+            transform: identity
+            opt_idxs: ${skel_param_idxs.identity.body}
+            shared_idxs: ~
+        factors: ${body_factors.non_pca.s2}
+        max_iters: 3
+      2:
+        params:
+          skel_params:
+            transform: identity
+            opt_idxs: ${skel_param_idxs.identity.body}
+            shared_idxs: ~
+        factors: ${body_factors.non_pca.s3}
+        max_iters: 3
+      3:
+        params:
+          cameras_ext:
+            opt_idxs: ~
+            shared_idxs: ~
+          skel_params:
+            transform: identity
+            opt_idxs: ${skel_param_idxs.identity.body}
+            shared_idxs: ~
+        factors: ${body_factors.non_pca.s4}
+        max_iters: 3
+      4:
+        params:
+          cameras_ext:
+            opt_idxs: ~
+            shared_idxs: ~
+          skel_params:
+            transform: identity
+            opt_idxs: ${skel_param_idxs.identity.body}
+            shared_idxs: ~
+        factors: ${body_factors.non_pca.s5}
+        max_iters: 3
+
+  all_cameras:
+    optimizer:
+      _target_: mesh_fitting.optim.optim.optimize_single_frames
+      _partial_: True
+      init_damping_ratio: ${init_damping_ratio}
+      init_damping_const: ${init_damping_const}
+      max_damping_ratio: ${max_damping_ratio}
+    stages:
+      0:
+        params:
+          cameras_ext:
+            opt_idxs: ~
+            shared_idxs: ~
+          shape_params:
+            transform: shape
+            opt_idxs: ${shape_param_idxs.full}
+            shared_idxs: ~
+          skel_params:
+            transform: pca
+            opt_idxs: ${skel_param_idxs.pca.full}
+            shared_idxs: ~
+        factors: ${body_factors.full_pca.s0}
+        max_iters: 3
+      1:
+        params:
+          cameras_ext:
+            opt_idxs: ~
+            shared_idxs: ~
+          shape_params:
+            transform: shape
+            opt_idxs: ${shape_param_idxs.full}
+            shared_idxs: ~
+          skel_params:
+            transform: pca
+            opt_idxs: ${skel_param_idxs.pca.full}
+            shared_idxs: ~
+        factors: ${body_factors.full_pca.s1}
+        max_iters: 3
+      2:
+        params:
+          cameras_ext:
+            opt_idxs: ~
+            shared_idxs: ~
+          shape_params:
+            transform: shape
+            opt_idxs: ${shape_param_idxs.full}
+            shared_idxs: ~
+          skel_params:
+            transform: pca
+            opt_idxs: ${skel_param_idxs.pca.full}
+            shared_idxs: ~
+        factors: ${body_factors.full_pca.s2}
+        max_iters: 3
+      3:
+        params:
+          cameras_ext:
+            opt_idxs: ~
+            shared_idxs: ~
+          shape_params:
+            transform: shape
+            opt_idxs: ${shape_param_idxs.full}
+            shared_idxs: ~
+          skel_params:
+            transform: pca
+            opt_idxs: ${skel_param_idxs.pca.full}
+            shared_idxs: ~
+        factors: ${body_factors.full_pca.s3}
+        max_iters: 3
+
+  refine_hand:
+    optimizer:
+      _target_: mesh_fitting.optim.optim.optimize_single_frames
+      _partial_: True
+      init_damping_ratio: ${init_damping_ratio}
+      init_damping_const: ${init_damping_const}
+      max_damping_ratio: ${max_damping_ratio}
+    stages:
+      0:
+        params:
+          shape_params:
+            transform: shape
+            opt_idxs: ${shape_param_idxs.full}
+            shared_idxs: ~
+          skel_params:
+            transform: pca
+            opt_idxs: ${skel_param_idxs.pca.full}
+            shared_idxs: ~
+        factors: ${body_factors.refine_pca.s0}
+        max_iters: 3
+      1:
+        params:
+          shape_params:
+            transform: shape
+            opt_idxs: ${shape_param_idxs.full}
+            shared_idxs: ~
+          skel_params:
+            transform: pca
+            opt_idxs: ${skel_param_idxs.pca.full}
+            shared_idxs: ~
+        factors: ${body_factors.refine_pca.s1}
+        max_iters: 3

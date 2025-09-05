@@ -1,0 +1,158 @@
+# @package _global_
+defaults:
+  - override /model: final_atlas
+  - override /factors: keypoint_sparse_2d
+
+result_folder: final_atlas/sparse/${person}
+init_file: single_frame_results.pkl
+result_file: multiple_frame_results.pkl
+
+init_damping_ratio: 0.1
+init_damping_const: 0.2
+max_damping_ratio: 250
+batch_size: 600
+
+problem: "multiple_frame_fitting"
+
+shape_pca_weight: 50
+scale_pca_weight: 1.5
+hand_pca_weight: 0.1
+
+vel_smooth_weights: 0
+acc_smooth_weights: 50
+jerk_smooth_weights: 0
+
+filters:
+  smooth:
+    reprojected: True
+
+multi_frame_optimizer:
+  _target_: mesh_fitting.optim.optim.optimize_multiple_frames
+  _partial_: True
+  init_damping_ratio: ${init_damping_ratio}
+  init_damping_const: ${init_damping_const}
+  max_damping_ratio: ${max_damping_ratio}
+
+init_optim:
+  cam_calib:
+    optimizer:
+      _target_: mesh_fitting.optim.optim.optimize_single_frames
+      _partial_: True
+      init_damping_ratio: ${init_damping_ratio}
+      init_damping_const: ${init_damping_const}
+      max_damping_ratio: ${max_damping_ratio}
+    stages:
+      0:
+        params:
+          cameras_ext:
+            opt_idxs: ~
+            shared_idxs: ~
+          skel_params:
+            transform: pca
+            opt_idxs: ${skel_param_idxs.pca.root}
+            shared_idxs: ~
+        factors: ${body_factors.full_pca.s0}
+        max_iters: 3
+      1:
+        params:
+          cameras_ext:
+            opt_idxs: ~
+            shared_idxs: ~
+          skel_params:
+            transform: pca
+            opt_idxs: ${skel_param_idxs.pca.full_joint}
+            shared_idxs: ~
+        factors: ${body_factors.full_pca.s2}
+        max_iters: 3
+      2:
+        params:
+          cameras_ext:
+            opt_idxs: ~
+            shared_idxs: ~
+          skel_params:
+            transform: pca
+            opt_idxs: ${skel_param_idxs.pca.full_joint}
+            shared_idxs: ~
+        factors: ${body_factors.full_pca.s3}
+        max_iters: 3
+
+optim:
+  init:
+    optimizer:
+      _target_: mesh_fitting.optim.optim.optimize_single_frames
+      _partial_: True
+      init_damping_ratio: ${init_damping_ratio}
+      init_damping_const: ${init_damping_const}
+      max_damping_ratio: ${max_damping_ratio}
+    stages:
+      0:
+        params:
+          skel_params:
+            transform: pca
+            opt_idxs: ${skel_param_idxs.pca.root}
+            shared_idxs: ~
+        factors: ${body_factors.full_pca.s0}
+        max_iters: 3
+      1:
+        params:
+          skel_params:
+            transform: pca
+            opt_idxs: ${skel_param_idxs.pca.full_joint}
+            shared_idxs: ~
+        factors: ${body_factors.full_pca.s1}
+        max_iters: 3
+      2:
+        params:
+          skel_params:
+            transform: pca
+            opt_idxs: ${skel_param_idxs.pca.full_joint}
+            shared_idxs: ~
+        factors: ${body_factors.full_pca.s2}
+        max_iters: 3
+      3:
+        params:
+          skel_params:
+            transform: pca
+            opt_idxs: ${skel_param_idxs.pca.full_joint}
+            shared_idxs: ~
+        factors: ${body_factors.full_pca.s3}
+        max_iters: 3
+  all_cameras:
+    optimizer: ${multi_frame_optimizer}
+    smooth_weights:
+      vel: ${vel_smooth_weights}
+      acc: ${acc_smooth_weights}
+      jerk: ${jerk_smooth_weights}
+    stages:
+      0:
+        params:
+          skel_params:
+            transform: pca
+            opt_idxs: ${skel_param_idxs.pca.full_joint}
+            shared_idxs: ~
+        factors: ${body_factors.full_pca.s3}
+        max_iters: 3
+
+  refine_hand:
+    optimizer: ${multi_frame_optimizer}
+    smooth_weights:
+      vel: ${vel_smooth_weights}
+      acc: ${acc_smooth_weights}
+      jerk: ${jerk_smooth_weights}
+    stages:
+      0:
+        params:
+          skel_params:
+            transform: pca
+            opt_idxs: ${skel_param_idxs.pca.full_joint}
+            shared_idxs: ~
+        factors: ${body_factors.refine_pca.s0}
+        max_iters: 3
+      1:
+        params:
+          skel_params:
+            transform: pca
+            opt_idxs: ${skel_param_idxs.pca.full_joint}
+            shared_idxs: ~
+        factors: ${body_factors.refine_pca.s1}
+        max_iters: 3

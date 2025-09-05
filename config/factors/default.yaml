@@ -1,0 +1,348 @@
+# @package _global_
+
+shape_pca_weight: 100
+scale_pca_weight: 1.5
+hand_pca_weight: 1
+
+# Joint Factors
+init_torso_joint_trivial_factors:
+  torso_keypoint_2d:
+    _target_: mesh_fitting.optim.factors.get_torso_keypoint_2d_factors
+    _partial_: True
+    weight: 1
+    loss_fn:
+      _target_: mesh_fitting.loss.TrivialLoss
+
+init_leg_joint_trivial_factors:
+  leg_keypoint_2d:
+    _target_: mesh_fitting.optim.factors.get_leg_keypoint_2d_factors
+    _partial_: True
+    legs: ["left", "right"]
+    weight: 1
+    loss_fn:
+      _target_: mesh_fitting.loss.TrivialLoss
+
+init_body_joint_trivial_factors:
+  body_keypoint_2d:
+    _target_: mesh_fitting.optim.factors.get_body_keypoint_2d_factors
+    _partial_: True
+    weight: 1
+    loss_fn:
+      _target_: mesh_fitting.loss.TrivialLoss
+  body_direction_2d:
+    _target_: mesh_fitting.optim.factors.get_body_direction_2d_factors
+    _partial_: True
+    tol: 25
+    weight: 1
+    loss_fn:
+      _target_: mesh_fitting.loss.TrivialLoss
+  hand_keypoint:
+    _target_: mesh_fitting.optim.factors.get_hand_keypoint_2d_factors
+    _partial_: True
+    weight: 0.02
+    loss_fn:
+      _target_: mesh_fitting.loss.TrivialLoss
+
+init_body_joint_welsh_factors:
+  body_keypoint:
+    _target_: mesh_fitting.optim.factors.get_body_keypoint_2d_factors
+    _partial_: True
+    weight: 1
+    loss_fn:
+      _target_: mesh_fitting.loss.WelschLoss
+      gamma: 3000
+  body_direction:
+    _target_: mesh_fitting.optim.factors.get_body_direction_2d_factors
+    _partial_: True
+    tol: 25
+    weight: 1
+    loss_fn:
+      _target_: mesh_fitting.loss.WelschLoss
+      gamma: 1200
+  hand_keypoint:
+    _target_: mesh_fitting.optim.factors.get_hand_keypoint_2d_factors
+    _partial_: True
+    weight: 0.02
+    loss_fn:
+      _target_: mesh_fitting.loss.TrivialLoss
+
+init_full_joint_trivial_factors:
+  body_keypoint:
+    _target_: mesh_fitting.optim.factors.get_body_keypoint_2d_factors
+    _partial_: True
+    weight: 1
+    loss_fn:
+      _target_: mesh_fitting.loss.WelschLoss
+      gamma: 1500
+  body_direction:
+    _target_: mesh_fitting.optim.factors.get_body_direction_2d_factors
+    _partial_: True
+    tol: 25
+    weight: 1
+    loss_fn:
+      _target_: mesh_fitting.loss.WelschLoss
+      gamma: 600
+  hand_keypoint:
+    _target_: mesh_fitting.optim.factors.get_hand_keypoint_2d_factors
+    _partial_: True
+    weight: 0.1
+    loss_fn:
+      _target_: mesh_fitting.loss.TrivialLoss
+
+final_full_joint_trivial_factors:
+  body_keypoint:
+    _target_: mesh_fitting.optim.factors.get_body_keypoint_2d_factors
+    _partial_: True
+    weight: 1
+    loss_fn:
+      _target_: mesh_fitting.loss.WelschLoss
+      gamma: 750
+  body_direction:
+    _target_: mesh_fitting.optim.factors.get_body_direction_2d_factors
+    _partial_: True
+    tol: 25
+    weight: 1
+    loss_fn:
+      _target_: mesh_fitting.loss.WelschLoss
+      gamma: 500
+  hand_keypoint:
+    _target_: mesh_fitting.optim.factors.get_hand_keypoint_2d_factors
+    _partial_: True
+    weight: 0.1
+    loss_fn:
+      _target_: mesh_fitting.loss.TrivialLoss
+
+init_full_joint_welsch_factors:
+  body_keypoint:
+    _target_: mesh_fitting.optim.factors.get_body_keypoint_2d_factors
+    _partial_: True
+    weight: 1
+    loss_fn:
+      _target_: mesh_fitting.loss.WelschLoss
+      gamma: 500
+  body_direction:
+    _target_: mesh_fitting.optim.factors.get_body_direction_2d_factors
+    _partial_: True
+    tol: 25
+    weight: 1
+    loss_fn:
+      _target_: mesh_fitting.loss.WelschLoss
+      gamma: 400
+  hand_keypoint:
+    _target_: mesh_fitting.optim.factors.get_hand_keypoint_2d_factors
+    _partial_: True
+    weight: 0.1
+    loss_fn:
+      _target_: mesh_fitting.loss.WelschLoss
+      gamma: 500
+
+final_hand_joint_trivial_factors:
+  body_keypoint:
+    _target_: mesh_fitting.optim.factors.get_body_keypoint_2d_factors
+    _partial_: True
+    weight: 1
+    loss_fn:
+      _target_: mesh_fitting.loss.WelschLoss
+      gamma: 400
+  body_direction:
+    _target_: mesh_fitting.optim.factors.get_body_direction_2d_factors
+    _partial_: True
+    tol: 25
+    weight: 1
+    loss_fn:
+      _target_: mesh_fitting.loss.WelschLoss
+      gamma: 300
+  hand_keypoint:
+    _target_: mesh_fitting.optim.factors.get_hand_keypoint_2d_factors
+    _partial_: True
+    weight: 0.1
+    loss_fn:
+      _target_: mesh_fitting.loss.TrivialLoss
+
+final_full_joint_welsch_factors:
+  body_keypoint:
+    _target_: mesh_fitting.optim.factors.get_body_keypoint_2d_factors
+    _partial_: True
+    weight: 1
+    loss_fn:
+      _target_: mesh_fitting.loss.WelschLoss
+      gamma: 400
+  body_direction:
+    _target_: mesh_fitting.optim.factors.get_body_direction_2d_factors
+    _partial_: True
+    tol: 25
+    weight: 1
+    loss_fn:
+      _target_: mesh_fitting.loss.WelschLoss
+      gamma: 300
+  hand_keypoint:
+    _target_: mesh_fitting.optim.factors.get_hand_keypoint_2d_factors
+    _partial_: True
+    weight: 0.1
+    loss_fn:
+      _target_: mesh_fitting.loss.WelschLoss
+      gamma: 400
+
+# Model Parameter Factors
+shape_pca_factors:
+  _target_: mesh_fitting.optim.factors.get_shape_pca_param_prior_factors
+  _partial_: True
+  shape_prior: null
+  confidence: null
+  weight: ${shape_pca_weight}
+
+# Optimization Parameter Factors
+scale_pca_factors:
+  _target_: mesh_fitting.optim.factors.get_scale_pca_param_prior_factors
+  _partial_: True
+  scale_prior: null
+  confidence: null
+  weight: ${scale_pca_weight}
+hand_pca_factors:
+  _target_: mesh_fitting.optim.factors.get_hand_pca_param_prior_factors
+  _partial_: True
+  hand_prior: null
+  confidence: null
+  weight: ${hand_pca_weight}
+
+# Factors
+init_torso_factors:
+  masked: True
+  joint_factors: ${init_torso_joint_trivial_factors}
+  model_param_factors: ~
+  opt_param_factors: ~
+
+init_leg_factors:
+  masked: True
+  joint_factors: ${init_leg_joint_trivial_factors}
+  model_param_factors: ~
+  opt_param_factors: ~
+
+init_body_trivial_factors:
+  masked: True
+  joint_factors: ${init_body_joint_trivial_factors}
+  model_param_factors:
+    skel_param_limit:
+      _target_: mesh_fitting.optim.factors.get_skel_param_limit_factors
+      _partial_: True
+      weight: 500
+  opt_param_factors: ~
+
+init_body_welsh_factors:
+  masked: False
+  joint_factors: ${init_body_joint_welsh_factors}
+  model_param_factors:
+    skel_param_limit:
+      _target_: mesh_fitting.optim.factors.get_skel_param_limit_factors
+      _partial_: True
+      weight: 250
+  opt_param_factors: ~
+
+init_full_welsch_factors:
+  masked: False
+  joint_factors: ${init_full_joint_welsch_factors}
+  model_param_factors:
+    skel_param_limit:
+      _target_: mesh_fitting.optim.factors.get_skel_param_limit_factors
+      _partial_: True
+      weight: 500
+  opt_param_factors: ~
+
+final_full_welsch_factors:
+  masked: False
+  joint_factors: ${final_full_joint_welsch_factors}
+  model_param_factors:
+    skel_param_limit:
+      _target_: mesh_fitting.optim.factors.get_skel_param_limit_factors
+      _partial_: True
+      weight: 1000
+  opt_param_factors: ~
+
+init_body_pca_trivial_factors:
+  masked: False
+  joint_factors: ${init_body_joint_trivial_factors}
+  model_param_factors:
+    skel_param_limit:
+      _target_: mesh_fitting.optim.factors.get_skel_param_limit_factors
+      _partial_: True
+      weight: 500
+    shape_pca_factors: ${shape_pca_factors}
+  opt_param_factors:
+    scale_pca_factors: ${scale_pca_factors}
+
+init_body_pca_welsh_factors:
+  masked: False
+  joint_factors: ${init_body_joint_welsh_factors}
+  model_param_factors:
+    skel_param_limit:
+      _target_: mesh_fitting.optim.factors.get_skel_param_limit_factors
+      _partial_: True
+      weight: 500
+    shape_pca_factors: ${shape_pca_factors}
+  opt_param_factors:
+    scale_pca_factors: ${scale_pca_factors}
+
+init_full_pca_trivial_factors:
+  masked: False
+  joint_factors: ${init_full_joint_trivial_factors}
+  model_param_factors:
+    skel_param_limit:
+      _target_: mesh_fitting.optim.factors.get_skel_param_limit_factors
+      _partial_: True
+      weight: 500
+    shape_pca_factors: ${shape_pca_factors}
+  opt_param_factors:
+    scale_pca_factors: ${scale_pca_factors}
+    hand_pca_factors: ${hand_pca_factors}
+
+final_full_pca_trivial_factors:
+  masked: False
+  joint_factors: ${final_full_joint_trivial_factors}
+  model_param_factors:
+    skel_param_limit:
+      _target_: mesh_fitting.optim.factors.get_skel_param_limit_factors
+      _partial_: True
+      weight: 500
+    shape_pca_factors: ${shape_pca_factors}
+  opt_param_factors:
+    scale_pca_factors: ${scale_pca_factors}
+    hand_pca_factors: ${hand_pca_factors}
+
+init_full_pca_welsch_factors:
+  masked: False
+  joint_factors: ${init_full_joint_welsch_factors}
+  model_param_factors:
+    skel_param_limit:
+      _target_: mesh_fitting.optim.factors.get_skel_param_limit_factors
+      _partial_: True
+      weight: 500
+    shape_pca_factors: ${shape_pca_factors}
+  opt_param_factors:
+    scale_pca_factors: ${scale_pca_factors}
+    hand_pca_factors: ${hand_pca_factors}
+
+final_hand_pca_trivial_factors:
+  masked: False
+  joint_factors: ${final_hand_joint_trivial_factors}
+  model_param_factors:
+    skel_param_limit:
+      _target_: mesh_fitting.optim.factors.get_skel_param_limit_factors
+      _partial_: True
+      weight: 1000
+    shape_pca_factors: ${shape_pca_factors}
+  opt_param_factors:
+    scale_pca_factors: ${scale_pca_factors}
+    hand_pca_factors: ${hand_pca_factors}
+
+final_full_pca_welsch_factors:
+  masked: False
+  joint_factors: ${final_full_joint_welsch_factors}
+  model_param_factors:
+    skel_param_limit:
+      _target_: mesh_fitting.optim.factors.get_skel_param_limit_factors
+      _partial_: True
+      weight: 1000
+    shape_pca_factors: ${shape_pca_factors}
+  opt_param_factors:
+    scale_pca_factors: ${scale_pca_factors}
+    hand_pca_factors: ${hand_pca_factors}

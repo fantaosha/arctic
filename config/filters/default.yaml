@@ -1,0 +1,155 @@
+relax:
+  body:
+    keypoints:
+      [
+        "left_shoulder",
+        "left_elbow",
+        "left_wrist",
+        "right_shoulder",
+        "right_elbow",
+        "right_wrist",
+        "left_hip",
+        "left_knee",
+        "left_ankle",
+        "right_hip",
+        "right_knee",
+        "right_ankle",
+      ]
+    filter:
+      min_num_cams: 2
+      acc_scores: 0.25
+      min_scores: 0.1
+  foot:
+    keypoints:
+      [
+        "left_big_toe",
+        "left_small_toe",
+        "left_heel",
+        "right_big_toe",
+        "right_small_toe",
+        "right_heel",
+      ]
+    filter:
+      min_num_cams: 2
+      acc_scores: 0.25
+      min_scores: 0.1
+
+ransac:
+  head:
+    keypoints: ["nose", "left_eye", "right_eye", "left_ear", "right_ear"]
+    filter:
+      _target_: mesh_fitting.optim.utils.ransac_triangulate_with_samples
+      _partial_: True
+      tol: 0.05 
+  body:
+    keypoints:
+      [
+        "left_shoulder",
+        "left_elbow",
+        "left_wrist",
+        "right_shoulder",
+        "right_elbow",
+        "right_wrist",
+        "left_hip",
+        "left_knee",
+        "left_ankle",
+        "right_hip",
+        "right_knee",
+        "right_ankle",
+        "left_big_toe",
+        "left_small_toe",
+        "left_heel",
+        "right_big_toe",
+        "right_small_toe",
+        "right_heel",
+      ]
+    filter:
+      _target_: mesh_fitting.optim.utils.ransac_triangulate_with_samples
+      _partial_: True
+      min_num_cams: 2
+      tol: 0.1
+
+ransac_hand:
+  keypoints:
+    [
+      "thumb_third_joint",
+      "thumb_second_joint",
+      "thumb_first_joint",
+      "thumb_tip",
+      "index_third_joint",
+      "index_second_joint",
+      "index_first_joint",
+      "index_tip",
+      "middle_third_joint",
+      "middle_second_joint",
+      "middle_first_joint",
+      "middle_tip",
+      "ring_third_joint",
+      "ring_second_joint",
+      "ring_first_joint",
+      "ring_tip",
+      "pinky_third_joint",
+      "pinky_second_joint",
+      "pinky_first_joint",
+      "pinky_tip",
+    ]
+  filter:
+    _target_: mesh_fitting.optim.utils.ransac_triangulate_with_samples
+    _partial_: True
+    tol: 0.5
+
+smooth:
+  reprojected: False
+  data:
+    head:
+      keypoints: ["nose", "left_eye", "right_eye", "left_ear", "right_ear"]
+      filter:
+        _target_: mesh_fitting.optim.utils.smooth_keypoints
+        _partial_: True
+        reprojected: ${filters.smooth.reprojected}
+        window_length: 13
+        poly_order: 5
+    body:
+      keypoints:
+        [
+          "left_shoulder",
+          "left_elbow",
+          "right_shoulder",
+          "right_elbow",
+          "left_hip",
+          "left_knee",
+          "right_hip",
+          "right_knee",
+        ]
+      filter:
+        _target_: mesh_fitting.optim.utils.smooth_keypoints
+        _partial_: True
+        reprojected: ${filters.smooth.reprojected}
+        window_length: 13
+        poly_order: 5
+    wrist:
+      keypoints: ["left_wrist", "right_wrist"]
+      filter:
+        _target_: mesh_fitting.optim.utils.smooth_keypoints
+        _partial_: True
+        reprojected: ${filters.smooth.reprojected}
+        window_length: 13
+        poly_order: 8
+    foot:
+      keypoints:
+        [
+          "left_ankle",
+          "left_big_toe",
+          "left_small_toe",
+          "left_heel",
+          "right_ankle",
+          "right_big_toe",
+          "right_small_toe",
+          "right_heel",
+        ]
+      filter:
+        _target_: mesh_fitting.optim.utils.smooth_keypoints
+        _partial_: True
+        reprojected: ${filters.smooth.reprojected}
+        window_length: 13
+        poly_order: 8

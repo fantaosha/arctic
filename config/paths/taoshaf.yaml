@@ -1,0 +1,3 @@
+atlas_dir: "/private/home/taoshaf/data/atlas"
+data_dir: "/private/home/taoshaf/data"
+keypoints_file: ${paths.atlas_dir}/keypoints.json

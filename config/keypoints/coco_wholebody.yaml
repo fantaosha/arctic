@@ -1,0 +1,216 @@
+sparse:
+  keypoint_model: vitpose
+  num_keypoints: 133
+  keypoint_idxs:
+    nose: 0
+    left_eye: 1
+    right_eye: 2
+    left_ear: 3
+    right_ear: 4
+    left_shoulder: 5
+    right_shoulder: 6
+    left_elbow: 7
+    right_elbow: 8
+    left_wrist: 9
+    right_wrist: 10
+    left_hip: 11
+    right_hip: 12
+    left_knee: 13
+    right_knee: 14
+    left_ankle: 15
+    right_ankle: 16
+    left_big_toe: 17
+    left_small_toe: 18
+    left_heel: 19
+    right_big_toe: 20
+    right_small_toe: 21
+    right_heel: 22
+    left_thumb_third_joint: 92
+    left_thumb_second_joint: 93
+    left_thumb_first_joint: 94
+    left_thumb_tip: 95
+    left_index_third_joint: 96
+    left_index_second_joint: 97
+    left_index_first_joint: 98
+    left_index_tip: 99
+    left_middle_third_joint: 100
+    left_middle_second_joint: 101
+    left_middle_first_joint: 102
+    left_middle_tip: 103
+    left_ring_third_joint: 104
+    left_ring_second_joint: 105
+    left_ring_first_joint: 106
+    left_ring_tip: 107
+    left_pinky_third_joint: 108
+    left_pinky_second_joint: 109
+    left_pinky_first_joint: 110
+    left_pinky_tip: 111
+    right_thumb_third_joint: 113
+    right_thumb_second_joint: 114
+    right_thumb_first_joint: 115
+    right_thumb_tip: 116
+    right_index_third_joint: 117
+    right_index_second_joint: 118
+    right_index_first_joint: 119
+    right_index_tip: 120
+    right_middle_third_joint: 121
+    right_middle_second_joint: 122
+    right_middle_first_joint: 123
+    right_middle_tip: 124
+    right_ring_third_joint: 125
+    right_ring_second_joint: 126
+    right_ring_first_joint: 127
+    right_ring_tip: 128
+    right_pinky_third_joint: 129
+    right_pinky_second_joint: 130
+    right_pinky_first_joint: 131
+    right_pinky_tip: 132
+
+  body_keypoints:
+    [
+      "nose",
+      "left_eye",
+      "right_eye",
+      "left_ear",
+      "right_ear",
+      "left_shoulder",
+      "left_elbow",
+      "left_wrist",
+      "right_shoulder",
+      "right_elbow",
+      "right_wrist",
+      "left_hip",
+      "left_knee",
+      "left_ankle",
+      "right_hip",
+      "right_knee",
+      "right_ankle",
+      "left_big_toe",
+      "left_small_toe",
+      "left_heel",
+      "right_big_toe",
+      "right_small_toe",
+      "right_heel",
+    ]
+
+  left_hand_keypoints:
+    [
+      "left_thumb_third_joint",
+      "left_thumb_second_joint",
+      "left_thumb_first_joint",
+      "left_thumb_tip",
+      "left_index_third_joint",
+      "left_index_second_joint",
+      "left_index_first_joint",
+      "left_index_tip",
+      "left_middle_third_joint",
+      "left_middle_second_joint",
+      "left_middle_first_joint",
+      "left_middle_tip",
+      "left_ring_third_joint",
+      "left_ring_second_joint",
+      "left_ring_first_joint",
+      "left_ring_tip",
+      "left_pinky_third_joint",
+      "left_pinky_second_joint",
+      "left_pinky_first_joint",
+      "left_pinky_tip",
+    ]
+
+  right_hand_keypoints:
+    [
+      "left_thumb_third_joint",
+      "left_thumb_second_joint",
+      "left_thumb_first_joint",
+      "left_thumb_tip",
+      "left_index_third_joint",
+      "left_index_second_joint",
+      "left_index_first_joint",
+      "left_index_tip",
+      "left_middle_third_joint",
+      "left_middle_second_joint",
+      "left_middle_first_joint",
+      "left_middle_tip",
+      "left_ring_third_joint",
+      "left_ring_second_joint",
+      "left_ring_first_joint",
+      "left_ring_tip",
+      "left_pinky_third_joint",
+      "left_pinky_second_joint",
+      "left_pinky_first_joint",
+      "left_pinky_tip",
+    ]
+
+  min_keypoint_2d_scores:
+    nose: 0.65
+    left_eye: 0.65
+    right_eye: 0.65
+    left_ear: 0.65
+    right_ear: 0.65
+    left_shoulder: 0.50
+    right_shoulder: 0.50
+    left_elbow: 0.50
+    right_elbow: 0.50
+    left_wrist: 0.50
+    right_wrist: 0.50
+    left_hip: 0.50
+    right_hip: 0.50
+    left_knee: 0.50
+    right_knee: 0.50
+    left_ankle: 0.50
+    right_ankle: 0.50
+    left_big_toe: 0.60
+    left_small_toe: 0.60
+    left_heel: 0.60
+    right_big_toe: 0.60
+    right_small_toe: 0.60
+    right_heel: 0.60
+    left_thumb_third_joint: 0.80
+    left_thumb_second_joint: 0.80
+    left_thumb_first_joint: 0.80
+    left_thumb_tip: 0.70
+    left_index_third_joint: 0.80
+    left_index_second_joint: 0.80
+    left_index_first_joint: 0.80
+    left_index_tip: 0.80
+    left_middle_third_joint: 0.80
+    left_middle_second_joint: 0.80
+    left_middle_first_joint: 0.80
+    left_middle_tip: 0.80
+    left_ring_third_joint: 0.80
+    left_ring_second_joint: 0.80
+    left_ring_first_joint: 0.80
+    left_ring_tip: 0.80
+    left_pinky_third_joint: 0.80
+    left_pinky_second_joint: 0.80
+    left_pinky_first_joint: 0.80
+    left_pinky_tip: 0.80
+    right_thumb_third_joint: 0.80
+    right_thumb_second_joint: 0.80
+    right_thumb_first_joint: 0.80
+    right_thumb_tip: 0.70
+    right_index_third_joint: 0.80
+    right_index_second_joint: 0.80
+    right_index_first_joint: 0.80
+    right_index_tip: 0.80
+    right_middle_third_joint: 0.80
+    right_middle_second_joint: 0.80
+    right_middle_first_joint: 0.80
+    right_middle_tip: 0.80
+    right_ring_third_joint: 0.80
+    right_ring_second_joint: 0.80
+    right_ring_first_joint: 0.80
+    right_ring_tip: 0.80
+    right_pinky_third_joint: 0.80
+    right_pinky_second_joint: 0.80
+    right_pinky_first_joint: 0.80
+    right_pinky_tip: 0.80
+dense:
+  keypoint_model: dense
+  num_keypoints: 595
+  keypoint_2d_score_scale: 0.50
+  min_keypoint_2d_score: 0.96
+
+original:
+  keypoint_model: orig
+  num_keypoints: 23

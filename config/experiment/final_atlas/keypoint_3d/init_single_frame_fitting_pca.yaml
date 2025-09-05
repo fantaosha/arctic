@@ -1,0 +1,142 @@
+# @package _global_
+defaults:
+  - override /model: final_atlas
+  - override /factors: keypoint_3d
+
+result_folder: final_atlas/keypoint_3d
+result_file: init_single_frame_results.pkl
+
+init_damping_ratio: 0.1
+init_damping_const: 0.2
+max_damping_ratio: 250
+batch_size: 600
+
+problem: "init_single_frame_fitting"
+
+shape_pca_weight: 50
+scale_pca_weight: 1.5
+hand_pca_weight: 0.1
+
+filters:
+  smooth:
+    reprojected: False
+
+optim:
+  init:
+    optimizer:
+      _target_: mesh_fitting.optim.optim.optimize_single_frames
+      _partial_: True
+      init_damping_ratio: ${init_damping_ratio}
+      init_damping_const: ${init_damping_const}
+      max_damping_ratio: ${max_damping_ratio}
+    stages:
+      0:
+        params:
+          skel_params:
+            transform: limit
+            opt_idxs: ${skel_param_idxs.limit.root}
+            shared_idxs: ~
+        factors: ${torso_factors}
+        max_iters: 12
+      1:
+        params:
+          skel_params:
+            transform: limit
+            opt_idxs: ${skel_param_idxs.limit.torso}
+            shared_idxs: ~
+        factors: ${torso_factors}
+        max_iters: 4
+      2:
+        params:
+          skel_params:
+            transform: limit
+            opt_idxs: ${skel_param_idxs.limit.legs}
+            shared_idxs: ~
+        factors: ${leg_factors}
+        max_iters: 4
+
+  pca:
+    optimizer:
+      _target_: mesh_fitting.optim.optim.optimize_single_frames
+      _partial_: True
+      init_damping_ratio: ${init_damping_ratio}
+      init_damping_const: ${init_damping_const}
+      max_damping_ratio: ${max_damping_ratio}
+    stages:
+      0:
+        params:
+          skel_params:
+            transform: limit
+            opt_idxs: ${skel_param_idxs.limit.body}
+            shared_idxs: ~
+        factors: ${body_factors.non_pca.s0}
+        max_iters: 6
+      1:
+        params:
+          shape_params:
+            transform: shape
+            opt_idxs: ${shape_param_idxs.full}
+            shared_idxs: ~
+          skel_params:
+            transform: identity
+            opt_idxs: ${skel_param_idxs.identity.body}
+            shared_idxs: ~
+        factors: ${body_factors.full_pca.s0}
+        max_iters: 6
+      2:
+        params:
+          shape_params:
+            transform: shape
+            opt_idxs: ${shape_param_idxs.full}
+            shared_idxs: ~
+          skel_params:
+            transform: pca
+            opt_idxs: ${skel_param_idxs.pca.full}
+            shared_idxs: ~
+        factors: ${body_factors.full_pca.s0}
+        max_iters: 4
+      3:
+        params:
+          shape_params:
+            transform: shape
+            opt_idxs: ${shape_param_idxs.full}
+            shared_idxs: ~
+          skel_params:
+            transform: pca
+            opt_idxs: ${skel_param_idxs.pca.full}
+            shared_idxs: ~
+        factors: ${body_factors.full_pca.s1}
+        max_iters: 4
+      4:
+        params:
+          shape_params:
+            transform: shape
+            opt_idxs: ${shape_param_idxs.full}
+            shared_idxs: ~
+          skel_params:
+            transform: pca
+            opt_idxs: ${skel_param_idxs.pca.full}
+            shared_idxs: ~
+        factors: ${body_factors.full_pca.s2}
+        max_iters: 4
+
+  refine:
+    optimizer:
+      _target_: mesh_fitting.optim.optim.optimize_single_frames
+      _partial_: True
+      init_damping_ratio: ${init_damping_ratio}
+      init_damping_const: ${init_damping_const}
+      max_damping_ratio: ${max_damping_ratio}
+    stages:
+      0:
+        params:
+          shape_params:
+            transform: shape
+            opt_idxs: ${shape_param_idxs.full}
+            shared_idxs: ~
+          skel_params:
+            transform: pca
+            opt_idxs: ${skel_param_idxs.pca.full}
+            shared_idxs: ~
+        factors: ${body_factors.refine_pca.s0}
+        max_iters: 6

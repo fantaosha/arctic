@@ -1,0 +1,19 @@
+defaults:
+  - model: compact_atlas
+  - factors: default
+  - keypoints: coco_wholebody
+  - paths: taoshaf
+  - filters: default
+  - _self_
+
+optimizer: ~
+result_file: ~
+
+device: cuda:0
+dtype: torch.float64
+
+dataset: ~
+sequence: ~
+cameras: ~
+
+init_file: ~

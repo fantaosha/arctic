@@ -1,0 +1,167 @@
+# @package _global_
+
+shape_pca_weight: 100
+scale_pca_weight: 1.5
+hand_pca_weight: 1
+camera_ext_prior_weight: 1000
+
+# Joint Factors
+torso_model_state_factors:
+  keypoint_dense_3d:
+    torso_keypoint_3d:
+      _target_: arctic.optim.factors.get_torso_full_keypoint_3d_factors
+      _partial_: True
+      weight: 1
+      loss_fn:
+        _target_: mesh_fitting.loss.TrivialLoss
+
+leg_model_state_factors:
+  keypoint_dense_3d:
+    leg_keypoint_3d:
+      _target_: arctic.optim.factors.get_leg_full_keypoint_3d_factors
+      _partial_: True
+      weight: 1
+      loss_fn:
+        _target_: mesh_fitting.loss.TrivialLoss
+    torso_keypoint_3d:
+      _target_: arctic.optim.factors.get_torso_full_keypoint_3d_factors
+      _partial_: True
+      weight: 1
+      loss_fn:
+        _target_: mesh_fitting.loss.TrivialLoss
+
+body_model_state_factors:
+  body_trivial:
+    f0:
+      keypoint_dense_3d:
+        body_keypoint_3d:
+          _target_: arctic.optim.factors.get_body_full_keypoint_3d_factors
+          _partial_: True
+          weight: 1
+          loss_fn:
+            _target_: mesh_fitting.loss.TrivialLoss
+        hand_keypoint_3d:
+          _target_: arctic.optim.factors.get_hand_full_keypoint_3d_factors
+          _partial_: True
+          weight: 0.5
+          loss_fn:
+            _target_: mesh_fitting.loss.TrivialLoss
+
+# Model Parameter Factors
+shape_pca_factors:
+  _target_: mesh_fitting.optim.factors.get_shape_pca_param_prior_factors
+  _partial_: True
+  shape_prior: null
+  confidence: null
+  weight: ${shape_pca_weight}
+
+camera_ext_prior_factors:
+  _target_: mesh_fitting.optim.factors.get_camera_extrinsics_prior_factors
+  _partial_: True
+  confidence: null
+  cam_idxs: ~
+  weight: ${camera_ext_prior_weight}
+
+# Optimization Parameter Factors
+scale_pca_factors:
+  _target_: mesh_fitting.optim.factors.get_scale_pca_param_prior_factors
+  _partial_: True
+  scale_prior: null
+  confidence: null
+  weight: ${scale_pca_weight}
+hand_pca_factors:
+  _target_: mesh_fitting.optim.factors.get_hand_pca_param_prior_factors
+  _partial_: True
+  hand_prior: null
+  confidence: null
+  weight: ${hand_pca_weight}
+
+opt_pca_param_factors:
+  scale_pca_factors: ${scale_pca_factors}
+  hand_pca_factors: ${hand_pca_factors}
+
+skel_param_limit_factors:
+  f025:
+    _target_: mesh_fitting.optim.factors.get_skel_param_limit_factors
+    _partial_: True
+    weight: 1000
+  f050:
+    _target_: mesh_fitting.optim.factors.get_skel_param_limit_factors
+    _partial_: True
+    weight: 2000
+  f100:
+    _target_: mesh_fitting.optim.factors.get_skel_param_limit_factors
+    _partial_: True
+    weight: 4000
+
+# Factors
+torso_factors:
+  masked: True
+  model_state_factors: ${torso_model_state_factors}
+  model_param_factors: ~
+  opt_param_factors: ~
+
+leg_factors:
+  masked: False
+  model_state_factors: ${leg_model_state_factors}
+  model_param_factors: ~
+  opt_param_factors: ~
+
+body_factors:
+  non_pca:
+    s0:
+      masked: False
+      model_state_factors: ${body_model_state_factors.body_trivial.f0}
+      model_param_factors:
+        skel_param_limit: ${skel_param_limit_factors.f050}
+      opt_param_factors: ~
+    s1:
+      masked: False
+      model_state_factors: ${body_model_state_factors.body_trivial.f0}
+      model_param_factors:
+        skel_param_limit: ${skel_param_limit_factors.f025}
+      opt_param_factors: ~
+    s2:
+      masked: False
+      model_state_factors: ${body_model_state_factors.body_trivial.f0}
+      model_param_factors:
+        skel_param_limit: ${skel_param_limit_factors.f100}
+      opt_param_factors: ~
+  scale_pca:
+    s0:
+      masked: False
+      model_state_factors: ${body_model_state_factors.body_trivial.f0}
+      model_param_factors:
+        skel_param_limit: ${skel_param_limit_factors.f050}
+        shape_pca_factors: ${shape_pca_factors}
+      opt_param_factors: ${opt_pca_param_factors}
+  full_pca:
+    s0:
+      masked: False
+      model_state_factors: ${body_model_state_factors.body_trivial.f0}
+      model_param_factors:
+        skel_param_limit: ${skel_param_limit_factors.f050}
+        shape_pca_factors: ${shape_pca_factors}
+      opt_param_factors: ${opt_pca_param_factors}
+    s1:
+      masked: False
+      model_state_factors: ${body_model_state_factors.body_trivial.f0}
+      model_param_factors:
+        skel_param_limit: ${skel_param_limit_factors.f025}
+        shape_pca_factors: ${shape_pca_factors}
+      opt_param_factors: ${opt_pca_param_factors}
+    s2:
+      masked: False
+      model_state_factors: ${body_model_state_factors.body_trivial.f0}
+      model_param_factors:
+        skel_param_limit: ${skel_param_limit_factors.f100}
+        shape_pca_factors: ${shape_pca_factors}
+      opt_param_factors: ${opt_pca_param_factors}
+  refine_pca:
+    s0:
+      masked: False
+      model_state_factors: ${body_model_state_factors.body_trivial.f0}
+      model_param_factors:
+        skel_param_limit: ${skel_param_limit_factors.f100}
+        shape_pca_factors: ${shape_pca_factors}
+      opt_param_factors: ${opt_pca_param_factors}
