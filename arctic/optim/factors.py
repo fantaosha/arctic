@@ -107,7 +107,13 @@ def get_leg_full_keypoint_3d_factors(
     joint_state_s0 = model.lbs_fn.joint_state_s_zero.to(dtype)
 
     keypoint_idxs = np.array(
-        [MARKERS.index(marker) for marker in L_LEG_MARKERS + R_LEG_MARKERS]
+        [
+            MARKERS.index(marker)
+            for marker in L_LEG_MARKERS
+            + R_LEG_MARKERS
+            + L_FOOT_MARKERS
+            + R_FOOT_MARKERS
+        ]
     )
 
     factors = {

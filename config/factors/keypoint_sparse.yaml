@@ -11,7 +11,7 @@ torso_model_state_factors:
     torso_keypoint_3d:
       _target_: arctic.optim.factors.get_torso_full_keypoint_3d_factors
       _partial_: True
-      weight: 1
+      weight: 100
       loss_fn:
         _target_: mesh_fitting.loss.TrivialLoss
 
@@ -20,13 +20,13 @@ leg_model_state_factors:
     leg_keypoint_3d:
       _target_: arctic.optim.factors.get_leg_full_keypoint_3d_factors
       _partial_: True
-      weight: 1
+      weight: 100
       loss_fn:
         _target_: mesh_fitting.loss.TrivialLoss
     torso_keypoint_3d:
       _target_: arctic.optim.factors.get_torso_full_keypoint_3d_factors
       _partial_: True
-      weight: 1
+      weight: 100
       loss_fn:
         _target_: mesh_fitting.loss.TrivialLoss
 
@@ -37,15 +37,89 @@ body_model_state_factors:
         body_keypoint_3d:
           _target_: arctic.optim.factors.get_body_full_keypoint_3d_factors
           _partial_: True
-          weight: 1
+          weight: 100
           loss_fn:
             _target_: mesh_fitting.loss.TrivialLoss
         hand_keypoint_3d:
           _target_: arctic.optim.factors.get_hand_full_keypoint_3d_factors
           _partial_: True
-          weight: 0.5
+          weight: 100
           loss_fn:
             _target_: mesh_fitting.loss.TrivialLoss
+    f1:
+      keypoint_dense_3d:
+        body_keypoint_3d:
+          _target_: arctic.optim.factors.get_body_full_keypoint_3d_factors
+          _partial_: True
+          weight: 100
+          loss_fn:
+            _target_: mesh_fitting.loss.TrivialLoss
+        hand_keypoint_3d:
+          _target_: arctic.optim.factors.get_hand_full_keypoint_3d_factors
+          _partial_: True
+          weight: 100
+          loss_fn:
+            _target_: mesh_fitting.loss.TrivialLoss
+      keypoint_sparse_2d:
+        body_keypoint_2d:
+          _target_: mesh_fitting.optim.factors.get_body_keypoint_2d_factors
+          _partial_: True
+          weight: 1
+          loss_fn:
+            _target_: mesh_fitting.loss.WelschLoss
+            gamma: 800
+        body_direction_2d:
+          _target_: mesh_fitting.optim.factors.get_body_direction_2d_factors
+          _partial_: True
+          tol: 25
+          weight: 1
+          loss_fn:
+            _target_: mesh_fitting.loss.WelschLoss
+            gamma: 600
+        # hand_keypoint_2d:
+        #   _target_: mesh_fitting.optim.factors.get_hand_keypoint_2d_factors
+        #   _partial_: True
+        #   weight: 0.2
+        #   loss_fn:
+        #     _target_: mesh_fitting.loss.WelschLoss
+        #     gamma: 400
+    f2:
+      keypoint_dense_3d:
+        body_keypoint_3d:
+          _target_: arctic.optim.factors.get_body_full_keypoint_3d_factors
+          _partial_: True
+          weight: 100
+          loss_fn:
+            _target_: mesh_fitting.loss.TrivialLoss
+        hand_keypoint_3d:
+          _target_: arctic.optim.factors.get_hand_full_keypoint_3d_factors
+          _partial_: True
+          weight: 100
+          loss_fn:
+            _target_: mesh_fitting.loss.TrivialLoss
+      keypoint_sparse_2d:
+        body_keypoint_2d:
+          _target_: mesh_fitting.optim.factors.get_body_keypoint_2d_factors
+          _partial_: True
+          weight: 1
+          loss_fn:
+            _target_: mesh_fitting.loss.WelschLoss
+            gamma: 400
+        body_direction_2d:
+          _target_: mesh_fitting.optim.factors.get_body_direction_2d_factors
+          _partial_: True
+          tol: 25
+          weight: 1
+          loss_fn:
+            _target_: mesh_fitting.loss.WelschLoss
+            gamma: 300
+        # hand_keypoint_2d:
+        #   _target_: mesh_fitting.optim.factors.get_hand_keypoint_2d_factors
+        #   _partial_: True
+        #   weight: 0.2
+        #   loss_fn:
+        #     _target_: mesh_fitting.loss.WelschLoss
+        #     gamma: 100
 
 # Model Parameter Factors
 shape_pca_factors:
@@ -152,7 +226,14 @@ body_factors:
       opt_param_factors: ${opt_pca_param_factors}
     s2:
       masked: False
-      model_state_factors: ${body_model_state_factors.body_trivial.f0}
+      model_state_factors: ${body_model_state_factors.body_trivial.f1}
+      model_param_factors:
+        skel_param_limit: ${skel_param_limit_factors.f050}
+        shape_pca_factors: ${shape_pca_factors}
+      opt_param_factors: ${opt_pca_param_factors}
+    s3:
+      masked: False
+      model_state_factors: ${body_model_state_factors.body_trivial.f2}
       model_param_factors:
         skel_param_limit: ${skel_param_limit_factors.f100}
         shape_pca_factors: ${shape_pca_factors}
@@ -160,7 +241,7 @@ body_factors:
   refine_pca:
     s0:
       masked: False
-      model_state_factors: ${body_model_state_factors.body_trivial.f0}
+      model_state_factors: ${body_model_state_factors.body_trivial.f2}
       model_param_factors:
         skel_param_limit: ${skel_param_limit_factors.f100}
         shape_pca_factors: ${shape_pca_factors}

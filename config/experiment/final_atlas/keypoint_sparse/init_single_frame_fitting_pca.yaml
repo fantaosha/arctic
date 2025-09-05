@@ -1,9 +1,9 @@
 # @package _global_
 defaults:
   - override /model: final_atlas
-  - override /factors: keypoint_3d
+  - override /factors: keypoint_sparse
 
-result_folder: final_atlas/keypoint_3d
+result_folder: final_atlas/sparse
 result_file: init_single_frame_results.pkl
 
 init_damping_ratio: 0.1
