@@ -9,7 +9,7 @@ result_file: init_single_frame_results.pkl
 init_damping_ratio: 0.1
 init_damping_const: 0.2
 max_damping_ratio: 250
-batch_size: 600
+batch_size: 350
 
 problem: "init_single_frame_fitting"
 
@@ -54,7 +54,6 @@ optim:
             shared_idxs: ~
         factors: ${leg_factors}
         max_iters: 4
-
   pca:
     optimizer:
       _target_: mesh_fitting.optim.optim.optimize_single_frames
@@ -119,7 +118,6 @@ optim:
             shared_idxs: ~
         factors: ${body_factors.full_pca.s2}
         max_iters: 4
-
   refine:
     optimizer:
       _target_: mesh_fitting.optim.optim.optimize_single_frames
