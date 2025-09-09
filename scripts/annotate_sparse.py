@@ -233,8 +233,8 @@ def anno_frames_for_single_cam(
             (body_kpts_2d[:, :2] >= bbox[:2]) * (body_kpts_2d[:, :2] <= bbox[2:]),
             axis=-1,
         ).sum()
-        if num_body_kpts_in_bbox <= 6:
-            continue
+        # if num_body_kpts_in_bbox <= 6:
+        #     continue
 
         cam_int = cams_int[batch_idx].cpu().numpy()
         cam_int *= rescale
