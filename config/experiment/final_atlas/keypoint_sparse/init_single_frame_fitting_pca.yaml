@@ -9,7 +9,7 @@ result_file: init_single_frame_results.pkl
 init_damping_ratio: 0.1
 init_damping_const: 0.2
 max_damping_ratio: 250
-batch_size: 350
+batch_size: 400
 
 problem: "init_single_frame_fitting"
 

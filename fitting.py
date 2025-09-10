@@ -22,7 +22,7 @@ import json
 from theseus import SO3
 from linear_blend_skinning_cuda.quaternions import Quaternion
 from arctic.configs.markers import *
-from arctic.utils.pipeline import optimize_frames
+from arctic.utils.pipeline import optimize_frames, optimize_stages
 
 
 def estimate_root_pose(
@@ -184,6 +184,147 @@ def init_single_frame_fitting(
     return results
 
 
+def single_frame_fitting(
+    cfg: DictConfig,
+    frame_idxs: np.ndarray,
+    cameras: List[int],
+    model: FinalATLAS,
+    cams_ext: torch.Tensor,
+    cams_int: torch.Tensor,
+    keypoint_sparse_2d_info: Dict[str, torch.Tensor],
+    keypoint_sparse_2d_pixels: torch.Tensor,
+    keypoint_sparse_2d_scores: torch.Tensor,
+    keypoint_sparse_2d_masks: torch.Tensor,
+    keypoint_dense_2d_info: Dict[str, torch.Tensor],
+    keypoint_dense_2d_pixels: torch.Tensor,
+    keypoint_dense_2d_scores: torch.Tensor,
+    keypoint_dense_3d_info: Dict[str, torch.Tensor],
+    keypoint_dense_3d_poses: torch.Tensor,
+    keypoint_dense_3d_scores: torch.Tensor,
+):
+    device = keypoint_sparse_2d_pixels.device
+    dtype = keypoint_sparse_2d_pixels.dtype
+
+    data_dir: str = os.path.join(cfg.paths.data_dir, cfg.dataset, cfg.sequence)
+    result_dir: str = os.path.join(data_dir, "results", cfg.result_folder)
+    init_guess = pd.read_pickle(os.path.join(result_dir, cfg.init_file))["all"]
+
+    assert np.all(np.array(list(init_guess.keys())) == np.array(frame_idxs))
+
+    cams_ext = np.array(
+        [init_guess[frame_idx]["camera_ext"] for frame_idx in frame_idxs]
+    )
+    cams_int = np.array(
+        [init_guess[frame_idx]["camera_int"] for frame_idx in frame_idxs]
+    )
+    shape_params = np.array(
+        [init_guess[frame_idx]["shape_params"] for frame_idx in frame_idxs]
+    )
+    skel_params = np.array(
+        [init_guess[frame_idx]["skel_params"] for frame_idx in frame_idxs]
+    )
+    opt_params = {
+        key: np.array(
+            [init_guess[frame_idx]["opt_params"][key] for frame_idx in frame_idxs]
+        )
+        for key in init_guess[frame_idxs[0]]["opt_params"]
+    }
+    opt_param_transforms = np.array(
+        [init_guess[frame_idx]["param_transform"] for frame_idx in frame_idxs]
+    )
+
+    assert (opt_param_transforms == opt_param_transforms[0]).all()
+
+    cams_ext = torch.from_numpy(cams_ext).to(device=device, dtype=dtype)
+    cams_int = torch.from_numpy(cams_int).to(device=device, dtype=dtype)
+    shape_params = torch.from_numpy(shape_params).to(device=device, dtype=dtype)
+    skel_params = torch.from_numpy(skel_params).to(device=device, dtype=dtype)
+    opt_params = {
+        key: torch.from_numpy(val).to(device=device, dtype=dtype)
+        for key, val in opt_params.items()
+    }
+    opt_states = {"param_transform": opt_param_transforms[0]}
+    param_transforms = {}
+    for param, tf_name in opt_states["param_transform"].items():
+        if param == "cameras_ext":
+            num_cams = cams_ext.shape[-3]
+            param_transforms["cameras_ext"] = ParamPoseTransform(
+                size=num_cams,
+                param_idxs={"cameras_ext": np.arange(num_cams)},
+                name="cam_ext",
+            )
+        elif param == "cameras_int":
+            raise NotImplementedError
+        elif param == "shape_params":
+            param_transforms["shape_params"] = model.param_shape_transform
+        elif param == "skel_params":
+            param_transforms["skel_params"] = getattr(
+                model, f"param_{tf_name}_transform"
+            )
+        else:
+            raise NotImplementedError
+
+    skel_params[:, model.scale_idxs] = skel_params[:, model.scale_idxs].mean(
+        dim=0, keepdim=True
+    )
+    shape_params[:] = shape_params[:].mean(dim=0, keepdim=True)
+    opt_params["shape_params"][:] = opt_params["shape_params"].mean(dim=0, keepdim=True)
+    opt_params["skel_params"][
+        :, param_transforms["skel_params"].param_idxs["scale"]
+    ] = opt_params["skel_params"][
+        :, param_transforms["skel_params"].param_idxs["scale"]
+    ].mean(
+        dim=0, keepdim=True
+    )
+
+    # Estimate Shape ans Scale Parameters
+    num_frames = len(frame_idxs)
+
+    init_frame_range = np.arange(num_frames)[
+        int(num_frames * 0.05) : -int(num_frames * 0.05) : (
+            num_frames + cfg.batch_size - 1
+        )
+        // cfg.batch_size
+    ]
+
+    opt_info = {}
+    opt_info["keypoint_sparse_2d"] = keypoint_sparse_2d_info
+    opt_info["keypoint_dense_2d"] = keypoint_dense_2d_info
+    opt_info["keypoint_dense_3d"] = keypoint_dense_3d_info
+
+    variables_shared = {
+        "cameras_ext": cams_ext[init_frame_range],
+        "cameras_int": cams_int[init_frame_range],
+        "shape_params": shape_params[init_frame_range],
+        "skel_params": skel_params[init_frame_range],
+    }
+    opt_params_shared = {key: val[init_frame_range] for key, val in opt_params.items()}
+    opt_data_shared = {}
+    opt_data_shared["keypoint_sparse_2d"] = {
+        "keypoint_2d_pixels": keypoint_sparse_2d_pixels[init_frame_range],
+        "keypoint_2d_scores": keypoint_sparse_2d_scores[init_frame_range],
+        "keypoint_2d_masks": keypoint_sparse_2d_masks[init_frame_range],
+    }
+    opt_data_shared["keypoint_dense_2d"] = {
+        "keypoint_2d_pixels": keypoint_dense_2d_pixels[init_frame_range],
+        "keypoint_2d_scores": keypoint_dense_2d_scores[init_frame_range],
+    }
+    opt_data_shared["keypoint_dense_3d"] = {
+        "keypoint_3d_poses": keypoint_dense_3d_poses[init_frame_range],
+        "keypoint_3d_scores": keypoint_dense_3d_scores[init_frame_range],
+    }
+
+    variables_shared, opt_params_shared, opt_states_shared = optimize_stages(
+        cfg.init_optim.shared_params,
+        model=model,
+        variables=variables_shared,
+        opt_params=opt_params_shared,
+        opt_info=opt_info,
+        opt_states=opt_states,
+        opt_data=opt_data_shared,
+    )
+
+
 @hydra.main(version_base="1.3", config_path="config", config_name="default.yaml")
 def main(cfg: DictConfig):
     device = cfg.device
@@ -205,7 +346,7 @@ def main(cfg: DictConfig):
     keypoint_sparse_2d_joint_mapping = keypoint_sparse_2d_info["joint"]
     keypoint_sparse_2d_dirs = {
         kpt: torch.tensor(
-            np.concatenate([kpt_dir[:16], np.zeros([73 * 3, 3])], axis=0),
+            kpt_dir[:16],
             device=device,
             dtype=dtype,
         )[: cfg.model.num_shape_comps]
@@ -227,7 +368,7 @@ def main(cfg: DictConfig):
     # Dense 2D keypoint info
     lod_dense_2d = lod_mapping(
         cfg.model.model_data_dir,
-        cfg.model.num_shape_comps,
+        16,
         cfg.model.num_expr_comps,
         lod="lod_595",
     )
@@ -330,9 +471,7 @@ def main(cfg: DictConfig):
 
     # Load dense 2D keypoint data
     try:
-        keypoint_dense_2d_data = load_keypoints(
-            cfg.keypoints.dense, seq_dir, cameras, person=cfg.person
-        )
+        keypoint_dense_2d_data = load_keypoints(cfg.keypoints.dense, seq_dir, cameras)
     except:
         keypoint_dense_2d_data = None
 
