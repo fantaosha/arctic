@@ -607,6 +607,71 @@ def main(cfg: DictConfig):
         cams_int=cams_int,
     )
 
+    l_hand_arctic_keypoint_idxs = [
+        "left_wrist",
+        "left_index_third_joint",
+        "left_index_second_joint",
+        "left_index_first_joint",
+        "left_middle_third_joint",
+        "left_middle_second_joint",
+        "left_middle_first_joint",
+        "left_pinky_third_joint",
+        "left_pinky_second_joint",
+        "left_pinky_first_joint",
+        "left_ring_third_joint",
+        "left_ring_second_joint",
+        "left_ring_first_joint",
+        "left_thumb_third_joint",
+        "left_thumb_second_joint",
+        "left_thumb_first_joint",
+        "left_thumb_tip",
+        "left_index_tip",
+        "left_middle_tip",
+        "left_ring_tip",
+        "left_pinky_tip",
+    ]
+
+    r_hand_arctic_keypoint_idxs = [
+        "right_wrist",
+        "right_index_third_joint",
+        "right_index_second_joint",
+        "right_index_first_joint",
+        "right_middle_third_joint",
+        "right_middle_second_joint",
+        "right_middle_first_joint",
+        "right_pinky_third_joint",
+        "right_pinky_second_joint",
+        "right_pinky_first_joint",
+        "right_ring_third_joint",
+        "right_ring_second_joint",
+        "right_ring_first_joint",
+        "right_thumb_third_joint",
+        "right_thumb_second_joint",
+        "right_thumb_first_joint",
+        "right_thumb_tip",
+        "right_index_tip",
+        "right_middle_tip",
+        "right_ring_tip",
+        "right_pinky_tip",
+    ]
+
+    l_hand_vitpose_keypoint_idxs = [
+        cfg.keypoints.sparse.keypoint_idxs[keypoint]
+        for keypoint in l_hand_arctic_keypoint_idxs[1:]
+    ]
+    r_hand_vitpose_keypoint_idxs = [
+        cfg.keypoints.sparse.keypoint_idxs[keypoint]
+        for keypoint in r_hand_arctic_keypoint_idxs[1:]
+    ]
+    keypoint_sparse_2d_pixels[:, :, l_hand_vitpose_keypoint_idxs] = torch.from_numpy(
+        seq_info["data_dict"][seq]["2d"]["joints.left"][mocap_idxs, 1:-1, 1:]
+    ).to(device=device, dtype=dtype)
+    keypoint_sparse_2d_pixels[:, :, r_hand_vitpose_keypoint_idxs] = torch.from_numpy(
+        seq_info["data_dict"][seq]["2d"]["joints.right"][mocap_idxs, 1:-1, 1:]
+    ).to(device=device, dtype=dtype)
+    keypoint_sparse_2d_scores[:, :, l_hand_vitpose_keypoint_idxs] = 1
+    keypoint_sparse_2d_scores[:, :, r_hand_vitpose_keypoint_idxs] = 1
+
     # Process 2D dense keypoints
     if keypoint_dense_2d_data is not None:
         keypoint_dense_2d_data = np.stack(
@@ -641,6 +706,7 @@ def main(cfg: DictConfig):
     keypoint_dense_2d_scores *= (
         keypoint_dense_2d_scores >= cfg.keypoints.dense.min_keypoint_2d_score
     )
+    keypoint_dense_2d_scores[:, [2, 5]] = 0
 
     if cfg.problem == "init_single_frame_fitting":
         results = init_single_frame_fitting(

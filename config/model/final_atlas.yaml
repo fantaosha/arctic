@@ -5,7 +5,7 @@ model:
 
   num_shape_comps: 235
   num_scale_comps: 38
-  num_hand_comps: 16
+  num_hand_comps: 32
   num_expr_comps: 10
 
   load_keypoint_mapping: True

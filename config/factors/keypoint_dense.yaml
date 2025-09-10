@@ -77,6 +77,29 @@ body_model_state_factors:
           loss_fn:
             _target_: mesh_fitting.loss.WelschLoss
             gamma: 1600
+      keypoint_sparse_2d:
+        body_keypoint_2d:
+          _target_: mesh_fitting.optim.factors.get_body_keypoint_2d_factors
+          _partial_: True
+          weight: 1
+          loss_fn:
+            _target_: mesh_fitting.loss.WelschLoss
+            gamma: 1200
+        body_direction_2d:
+          _target_: mesh_fitting.optim.factors.get_body_direction_2d_factors
+          _partial_: True
+          tol: 25
+          weight: 1
+          loss_fn:
+            _target_: mesh_fitting.loss.WelschLoss
+            gamma: 1000
+        hand_keypoint_2d:
+          _target_: mesh_fitting.optim.factors.get_hand_keypoint_2d_factors
+          _partial_: True
+          weight: 0.2
+          loss_fn:
+            _target_: mesh_fitting.loss.WelschLoss
+            gamma: 800
     f1:
       keypoint_dense_3d:
         body_keypoint_3d:
@@ -98,7 +121,7 @@ body_model_state_factors:
           weight: 1
           loss_fn:
             _target_: mesh_fitting.loss.WelschLoss
-            gamma: 800
+            gamma: 1000
         body_direction_2d:
           _target_: mesh_fitting.optim.factors.get_body_direction_2d_factors
           _partial_: True
@@ -106,14 +129,14 @@ body_model_state_factors:
           weight: 1
           loss_fn:
             _target_: mesh_fitting.loss.WelschLoss
+            gamma: 800
+        hand_keypoint_2d:
+          _target_: mesh_fitting.optim.factors.get_hand_keypoint_2d_factors
+          _partial_: True
+          weight: 0.2
+          loss_fn:
+            _target_: mesh_fitting.loss.WelschLoss
             gamma: 600
-        # hand_keypoint_2d:
-        #   _target_: mesh_fitting.optim.factors.get_hand_keypoint_2d_factors
-        #   _partial_: True
-        #   weight: 0.2
-        #   loss_fn:
-        #     _target_: mesh_fitting.loss.WelschLoss
-        #     gamma: 400
       keypoint_dense_2d:
         full_body_dense_2d:
           _target_: mesh_fitting.optim.factors.get_body_keypoint_dense_2d_factors
@@ -143,7 +166,7 @@ body_model_state_factors:
           weight: 1
           loss_fn:
             _target_: mesh_fitting.loss.WelschLoss
-            gamma: 400
+            gamma: 800
         body_direction_2d:
           _target_: mesh_fitting.optim.factors.get_body_direction_2d_factors
           _partial_: True
@@ -151,14 +174,14 @@ body_model_state_factors:
           weight: 1
           loss_fn:
             _target_: mesh_fitting.loss.WelschLoss
-            gamma: 300
-        # hand_keypoint_2d:
-        #   _target_: mesh_fitting.optim.factors.get_hand_keypoint_2d_factors
-        #   _partial_: True
-        #   weight: 0.2
-        #   loss_fn:
-        #     _target_: mesh_fitting.loss.WelschLoss
-        #     gamma: 100
+            gamma: 600
+        hand_keypoint_2d:
+          _target_: mesh_fitting.optim.factors.get_hand_keypoint_2d_factors
+          _partial_: True
+          weight: 0.2
+          loss_fn:
+            _target_: mesh_fitting.loss.WelschLoss
+            gamma: 400
       keypoint_dense_2d:
         full_body_dense_2d:
           _target_: mesh_fitting.optim.factors.get_body_keypoint_dense_2d_factors
@@ -204,13 +227,13 @@ body_model_state_factors:
           loss_fn:
             _target_: mesh_fitting.loss.WelschLoss
             gamma: 300
-        # hand_keypoint_2d:
-        #   _target_: mesh_fitting.optim.factors.get_hand_keypoint_2d_factors
-        #   _partial_: True
-        #   weight: 0.2
-        #   loss_fn:
-        #     _target_: mesh_fitting.loss.WelschLoss
-        #     gamma: 100
+        hand_keypoint_2d:
+          _target_: mesh_fitting.optim.factors.get_hand_keypoint_2d_factors
+          _partial_: True
+          weight: 0.2
+          loss_fn:
+            _target_: mesh_fitting.loss.WelschLoss
+            gamma: 100
       keypoint_dense_2d:
         full_body_dense_2d:
           _target_: mesh_fitting.optim.factors.get_body_keypoint_dense_2d_factors
@@ -256,13 +279,13 @@ body_model_state_factors:
           loss_fn:
             _target_: mesh_fitting.loss.WelschLoss
             gamma: 300
-        # hand_keypoint_2d:
-        #   _target_: mesh_fitting.optim.factors.get_hand_keypoint_2d_factors
-        #   _partial_: True
-        #   weight: 0.2
-        #   loss_fn:
-        #     _target_: mesh_fitting.loss.WelschLoss
-        #     gamma: 100
+        hand_keypoint_2d:
+          _target_: mesh_fitting.optim.factors.get_hand_keypoint_2d_factors
+          _partial_: True
+          weight: 0.2
+          loss_fn:
+            _target_: mesh_fitting.loss.WelschLoss
+            gamma: 100
       keypoint_dense_2d:
         full_body_dense_2d:
           _target_: mesh_fitting.optim.factors.get_body_keypoint_dense_2d_factors
