@@ -657,17 +657,17 @@ def main(cfg: DictConfig):
 
     l_hand_vitpose_keypoint_idxs = [
         cfg.keypoints.sparse.keypoint_idxs[keypoint]
-        for keypoint in l_hand_arctic_keypoint_idxs[1:]
+        for keypoint in l_hand_arctic_keypoint_idxs
     ]
     r_hand_vitpose_keypoint_idxs = [
         cfg.keypoints.sparse.keypoint_idxs[keypoint]
-        for keypoint in r_hand_arctic_keypoint_idxs[1:]
+        for keypoint in r_hand_arctic_keypoint_idxs
     ]
     keypoint_sparse_2d_pixels[:, :, l_hand_vitpose_keypoint_idxs] = torch.from_numpy(
-        seq_info["data_dict"][seq]["2d"]["joints.left"][mocap_idxs, 1:-1, 1:]
+        seq_info["data_dict"][seq]["2d"]["joints.left"][mocap_idxs, 1:-1]
     ).to(device=device, dtype=dtype)
     keypoint_sparse_2d_pixels[:, :, r_hand_vitpose_keypoint_idxs] = torch.from_numpy(
-        seq_info["data_dict"][seq]["2d"]["joints.right"][mocap_idxs, 1:-1, 1:]
+        seq_info["data_dict"][seq]["2d"]["joints.right"][mocap_idxs, 1:-1]
     ).to(device=device, dtype=dtype)
     keypoint_sparse_2d_scores[:, :, l_hand_vitpose_keypoint_idxs] = 1
     keypoint_sparse_2d_scores[:, :, r_hand_vitpose_keypoint_idxs] = 1
