@@ -81,16 +81,16 @@ skel_param_idxs:
         value: [0, 6]
     scale:
       - type: range
-        value: [114, 132]
+        value: [146, 164]
       - type: range
-        value: [132, 152]
+        value: [164, 184]
     scale_root:
       - type: range
         value: [0, 6]
       - type: range
-        value: [114, 132]
+        value: [146, 164]
       - type: range
-        value: [132, 152]
+        value: [164, 184]
     full:
       - type: range
         value: [0, 56]
@@ -105,7 +105,7 @@ skel_param_idxs:
       - type: range
         value: [73, 74]
       - type: range
-        value: [76, 152]
+        value: [76, 184]
     full_joint:
       - type: range
         value: [0, 56]
@@ -122,4 +122,4 @@ skel_param_idxs:
       - type: range
         value: [76, 82]
       - type: range
-        value: [82, 114]
+        value: [82, 146]
