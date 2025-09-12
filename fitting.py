@@ -696,7 +696,7 @@ def main(cfg: DictConfig):
 
     keypoint_dense_2d_scores = (
         np.exp(-keypoint_dense_2d_data[..., -1])
-        / np.exp(-keypoint_dense_2d_data[..., -1]).max(axis=-2, keepdims=True)
+        / np.exp(-keypoint_dense_2d_data[..., -1]).max(axis=-1, keepdims=True)
         * (keypoint_dense_2d_data[..., 2] > 0)
     )
     keypoint_dense_2d_scores = torch.from_numpy(keypoint_dense_2d_scores).to(
@@ -706,7 +706,6 @@ def main(cfg: DictConfig):
     keypoint_dense_2d_scores *= (
         keypoint_dense_2d_scores >= cfg.keypoints.dense.min_keypoint_2d_score
     )
-    keypoint_dense_2d_scores[:, [2, 5]] = 0
 
     if cfg.problem == "init_single_frame_fitting":
         results = init_single_frame_fitting(
