@@ -209,7 +209,7 @@ dense:
   keypoint_model: dense
   num_keypoints: 595
   keypoint_2d_score_scale: 0.50
-  min_keypoint_2d_score: 0.96
+  min_keypoint_2d_score: 0.90
 
 original:
   keypoint_model: orig

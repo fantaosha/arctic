@@ -1,0 +1,134 @@
+# @package _global_
+model:
+  _target_: mesh_fitting.optim.model.proto.Proto
+  model_data_dir: ${paths.atlas_dir}/proto
+
+  num_body_shape_comps: 20
+  num_face_shape_comps: 20
+  num_hand_shape_comps: 5
+  num_hand_scale_comps: 25
+  num_hand_pose_comps: 32
+  num_expr_comps: 10
+
+  load_keypoint_mapping: True
+
+  lod: "lod1"
+
+  verbose: True
+
+num_shape_comps: 45
+num_scale_comps: 43
+
+shape_param_idxs:
+  full:
+    - type: range
+      value:
+        - 0
+        - ${num_shape_comps}
+
+skel_param_idxs:
+  limit:
+    root:
+      - type: range
+        value: [0, 6]
+      - type: list
+        value: [139, 141, 146, 147, 148]
+    torso:
+      - type: range
+        value: [0, 24]
+      - type: list
+        value: [139, 141, 146, 147, 148]
+    legs:
+      - type: range
+        value: [0, 24]
+      - type: list
+        value: [50, 51, 52, 53, 54, 59, 60, 61, 62, 63]
+      - type: list
+        value: [139, 141, 146, 147, 148, 149, 150, 151, 152, 153]
+    body:
+      - type: range
+        value: [0, 56]
+      - type: range
+        value: [57, 58]
+      - type: range
+        value: [59, 65]
+      - type: range
+        value: [66, 67]
+      - type: range
+        value: [69, 70]
+      - type: range
+        value: [73, 74]
+      - type: range
+        value: [76, 82]
+      - type: range
+        value: [136, 154]
+  identity:
+    body:
+      - type: range
+        value: [0, 56]
+      - type: range
+        value: [57, 58]
+      - type: range
+        value: [59, 65]
+      - type: range
+        value: [66, 67]
+      - type: range
+        value: [69, 70]
+      - type: range
+        value: [73, 74]
+      - type: range
+        value: [76, 82]
+      - type: range
+        value: [136, 154]
+  pca:
+    root:
+      - type: range
+        value: [0, 6]
+    scale:
+      - type: range
+        value: [114, 132]
+      - type: range
+        value: [132, 152]
+    scale_root:
+      - type: range
+        value: [0, 6]
+      - type: range
+        value: [146, 164]
+      - type: range
+        value: [164, 189]
+    full:
+      - type: range
+        value: [0, 56]
+      - type: range
+        value: [57, 58]
+      - type: range
+        value: [59, 65]
+      - type: range
+        value: [66, 67]
+      - type: range
+        value: [69, 70]
+      - type: range
+        value: [73, 74]
+      - type: range
+        value: [76, 82]
+      - type: range
+        value: [82, 146]
+      - type: range
+        value: [146, 189]
+    full_joint:
+      - type: range
+        value: [0, 56]
+      - type: range
+        value: [57, 58]
+      - type: range
+        value: [59, 65]
+      - type: range
+        value: [66, 67]
+      - type: range
+        value: [69, 70]
+      - type: range
+        value: [73, 74]
+      - type: range
+        value: [76, 82]
+      - type: range
+        value: [82, 146]
