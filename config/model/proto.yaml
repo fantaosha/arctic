@@ -6,6 +6,7 @@ model:
   num_body_shape_comps: 20
   num_face_shape_comps: 20
   num_hand_shape_comps: 5
+  num_zero_shape_comps: 219
   num_hand_scale_comps: 25
   num_hand_pose_comps: 32
   num_expr_comps: 10
@@ -16,7 +17,7 @@ model:
 
   verbose: True
 
-num_shape_comps: 45
+num_shape_comps: 264
 num_scale_comps: 43
 
 shape_param_idxs:
@@ -25,6 +26,9 @@ shape_param_idxs:
       value:
         - 0
         - ${num_shape_comps}
+  nonzero:
+    - type: range
+      value: [0, 45]
 
 skel_param_idxs:
   limit:

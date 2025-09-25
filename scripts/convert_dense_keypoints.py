@@ -35,7 +35,7 @@ def convert_dense_keypoints_for_single_cam(
     src_dir: str = os.path.join(data_dir, seq)
     dst_dir: str = os.path.join(save_dir, seq)
 
-    dst_dir: str = os.path.join(dst_dir, "keypoints", "dense", cam)
+    dst_dir: str = os.path.join(dst_dir, "keypoints", "dense", "prod", cam)
     if not os.path.exists(dst_dir):
         try:
             os.makedirs(dst_dir)
@@ -82,7 +82,7 @@ def main():
     parser.add_argument(
         "--data_dir",
         type=str,
-        default="/checkpoint/taoshaf/results/CondDenseDetection/arctic/",
+        default="/checkpoint/taoshaf/results/CondDenseDetection/prod/arctic/",
     )
     parser.add_argument(
         "--save_dir", type=str, default="/private/home/taoshaf/data/arctic/"

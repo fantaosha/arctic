@@ -17,7 +17,7 @@ from mesh_fitting.utils.pipeline import (
     get_min_keypoint_2d_scores,
 )
 from mesh_fitting.optim.kinematics import normalize_rotmat, transform_root_pose
-from mesh_fitting.optim.model.utils import lod_mapping
+from mesh_fitting.optim.model.utils import lod_mapping, lod_proto_mapping
 import json
 from theseus import SO3
 from linear_blend_skinning_cuda.quaternions import Quaternion
@@ -344,14 +344,30 @@ def main(cfg: DictConfig):
     keypoint_sparse_2d_file = os.path.join(cfg.model.model_data_dir, "keypoints.pkl")
     keypoint_sparse_2d_info = pd.read_pickle(keypoint_sparse_2d_file)
     keypoint_sparse_2d_joint_mapping = keypoint_sparse_2d_info["joint"]
-    keypoint_sparse_2d_dirs = {
-        kpt: torch.tensor(
-            kpt_dir[:16],
-            device=device,
-            dtype=dtype,
-        )[: cfg.model.num_shape_comps]
-        for kpt, kpt_dir in keypoint_sparse_2d_info["dirs"].items()
-    }
+    if "proto" in cfg.model.model_data_dir:
+        keypoint_sparse_2d_dirs = {
+            kpt: torch.tensor(kpt_dir, device=device, dtype=dtype)
+            for kpt, kpt_dir in keypoint_sparse_2d_info["dirs"].items()
+        }
+        keypoint_sparse_2d_dirs = {
+            kpt: torch.cat(
+                [
+                    dirs[:20][: cfg.model.num_body_shape_comps],
+                    dirs[20:40][: cfg.model.num_face_shape_comps],
+                    dirs[40:][: cfg.model.num_hand_shape_comps],
+                ]
+            )
+            for kpt, dirs in keypoint_sparse_2d_dirs.items()
+        }
+    else:
+        keypoint_sparse_2d_dirs = {
+            kpt: torch.tensor(
+                kpt_dir[:16],
+                device=device,
+                dtype=dtype,
+            )[: cfg.model.num_shape_comps]
+            for kpt, kpt_dir in keypoint_sparse_2d_info["dirs"].items()
+        }
     keypoint_sparse_2d_mean = {
         kpt: torch.tensor(kpt_mean, device=device, dtype=dtype)
         for kpt, kpt_mean in keypoint_sparse_2d_info["mean"].items()
@@ -366,12 +382,23 @@ def main(cfg: DictConfig):
     }
 
     # Dense 2D keypoint info
-    lod_dense_2d = lod_mapping(
-        cfg.model.model_data_dir,
-        16,
-        cfg.model.num_expr_comps,
-        lod="lod_595",
-    )
+    if "proto" in cfg.model.model_data_dir:
+        lod_dense_2d = lod_proto_mapping(
+            cfg.model.model_data_dir,
+            cfg.model.num_body_shape_comps,
+            cfg.model.num_face_shape_comps,
+            cfg.model.num_hand_shape_comps,
+            cfg.model.num_expr_comps,
+            lod="lod6",
+        )
+    else:
+        lod_dense_2d = lod_mapping(
+            cfg.model.model_data_dir,
+            16,
+            cfg.model.num_expr_comps,
+            lod="lod_595",
+        )
+        lod_dense_2d["shape_comps"][16:, :] = 0
 
     keypoint_dense_2d_info: Dict[str, torch.Tensor] = {
         "weights": lod_dense_2d["skin_weights"].to(device=device, dtype=dtype),
@@ -379,12 +406,16 @@ def main(cfg: DictConfig):
         "dirs": lod_dense_2d["shape_comps"].to(device=device, dtype=dtype),
         "mean": lod_dense_2d["shape_mean"].to(device=device, dtype=dtype),
     }
-    keypoint_dense_2d_info["dirs"][16:, :] = 0
 
     # Dense 3D keypoint info
-    keypoint_dense_3d_info = pd.read_pickle(
-        "/private/home/taoshaf/Documents/projects/arctic/data/markers.pkl"
-    )
+    if "proto" in cfg.model.model_data_dir:
+        keypoint_dense_3d_info = pd.read_pickle(
+            "/private/home/taoshaf/Documents/projects/arctic/data/proto_markers.pkl"
+        )
+    else:
+        keypoint_dense_3d_info = pd.read_pickle(
+            "/private/home/taoshaf/Documents/projects/arctic/data/atlas_markers.pkl"
+        )
     keypoint_dense_3d_info: Dict[str, torch.Tensor] = {
         "weights": keypoint_dense_3d_info["skin_weights"].to(
             device=device, dtype=dtype
@@ -409,7 +440,9 @@ def main(cfg: DictConfig):
     model: FinalATLAS = hydra.utils.instantiate(cfg.model).to(
         device=device, dtype=dtype
     )
-    model.shape_comps[16:] = 0
+
+    if "proto" not in cfg.model.model_data_dir:
+        model.shape_comps[16:] = 0
 
     seq: str = cfg.sequence
     subject: str = seq.split("/")[0]
@@ -663,12 +696,31 @@ def main(cfg: DictConfig):
         cfg.keypoints.sparse.keypoint_idxs[keypoint]
         for keypoint in r_hand_arctic_keypoint_idxs
     ]
-    keypoint_sparse_2d_pixels[:, :, l_hand_vitpose_keypoint_idxs] = torch.from_numpy(
+
+    keypoints_l_hand_2d = torch.from_numpy(
         seq_info["data_dict"][seq]["2d"]["joints.left"][mocap_idxs, 1:-1]
     ).to(device=device, dtype=dtype)
-    keypoint_sparse_2d_pixels[:, :, r_hand_vitpose_keypoint_idxs] = torch.from_numpy(
+    keypoints_r_hand_2d = torch.from_numpy(
         seq_info["data_dict"][seq]["2d"]["joints.right"][mocap_idxs, 1:-1]
     ).to(device=device, dtype=dtype)
+
+    keypoint_dense_3d_poses_cam = (
+        torch.einsum("bcij,bkj->bcki", cams_ext[:, :, :3, :3], keypoint_dense_3d_poses)
+        + cams_ext[:, :, None, :, 3]
+    )
+
+    keypoints_l_hand_2d[..., 1, :] = (
+        keypoint_dense_3d_poses_cam[:, :, 16, :2]
+        / keypoint_dense_3d_poses_cam[:, :, 16, [2]]
+    ) * cams_int[..., :2] + cams_int[..., 2:]
+
+    keypoints_r_hand_2d[..., 1, :] = (
+        keypoint_dense_3d_poses_cam[:, :, 50, :2]
+        / keypoint_dense_3d_poses_cam[:, :, 50, [2]]
+    ) * cams_int[..., :2] + cams_int[..., 2:]
+
+    keypoint_sparse_2d_pixels[:, :, l_hand_vitpose_keypoint_idxs] = keypoints_l_hand_2d
+    keypoint_sparse_2d_pixels[:, :, r_hand_vitpose_keypoint_idxs] = keypoints_r_hand_2d
     keypoint_sparse_2d_scores[:, :, l_hand_vitpose_keypoint_idxs] = 1
     keypoint_sparse_2d_scores[:, :, r_hand_vitpose_keypoint_idxs] = 1
 

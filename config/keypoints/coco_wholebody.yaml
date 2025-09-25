@@ -206,7 +206,7 @@ sparse:
     right_pinky_first_joint: 0.80
     right_pinky_tip: 0.80
 dense:
-  keypoint_model: dense
+  keypoint_model: dense/prod
   num_keypoints: 595
   keypoint_2d_score_scale: 0.50
   min_keypoint_2d_score: 0.90

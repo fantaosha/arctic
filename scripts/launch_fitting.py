@@ -17,7 +17,7 @@ def main():
 
     command = ["python", "fitting.py"]
 
-    exp_args = [f"+experiment=final_atlas/{exp}" for exp in exps]
+    exp_args = [f"+experiment=proto/{exp}" for exp in exps]
 
     for seq in seqs:
         print(f"Start fitting {seq}.")

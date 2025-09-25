@@ -1,10 +1,10 @@
 # @package _global_
 defaults:
-  - override /model: final_atlas
+  - override /model: proto
   - override /factors: keypoint_dense
 
-init_folder: final_atlas/sparse
-result_folder: final_atlas/dense
+init_folder: proto/sparse
+result_folder: proto/dense
 result_file: init_single_frame_results.pkl
 
 init_damping_ratio: 0.1
@@ -72,7 +72,7 @@ optim:
         params:
           shape_params:
             transform: shape
-            opt_idxs: ${shape_param_idxs.full}
+            opt_idxs: ${shape_param_idxs.nonzero}
             shared_idxs: ~
           skel_params:
             transform: identity
@@ -84,7 +84,7 @@ optim:
         params:
           shape_params:
             transform: shape
-            opt_idxs: ${shape_param_idxs.full}
+            opt_idxs: ${shape_param_idxs.nonzero}
             shared_idxs: ~
           skel_params:
             transform: pca
@@ -96,7 +96,7 @@ optim:
         params:
           shape_params:
             transform: shape
-            opt_idxs: ${shape_param_idxs.full}
+            opt_idxs: ${shape_param_idxs.nonzero}
             shared_idxs: ~
           skel_params:
             transform: pca
