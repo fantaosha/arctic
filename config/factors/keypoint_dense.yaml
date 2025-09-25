@@ -3,7 +3,7 @@
 shape_pca_weight: 100
 scale_pca_weight: 0.5
 hand_pca_weight: 2.5
-camera_ext_prior_weight: 1000
+camera_ext_prior_weight: 250
 body_keypoint_dense_weight: 4e-1
 hand_keypoint_dense_weight: 1e-2
 
@@ -364,18 +364,21 @@ body_factors:
       model_state_factors: ${body_model_state_factors.body_trivial.f0}
       model_param_factors:
         skel_param_limit: ${skel_param_limit_factors.f050}
+        cam_ext_prior: ${camera_ext_prior_factors}
       opt_param_factors: ~
     s1:
       masked: False
       model_state_factors: ${body_model_state_factors.body_trivial.f0}
       model_param_factors:
         skel_param_limit: ${skel_param_limit_factors.f025}
+        cam_ext_prior: ${camera_ext_prior_factors}
       opt_param_factors: ~
     s2:
       masked: False
       model_state_factors: ${body_model_state_factors.body_trivial.f0}
       model_param_factors:
         skel_param_limit: ${skel_param_limit_factors.f100}
+        cam_ext_prior: ${camera_ext_prior_factors}
       opt_param_factors: ~
   scale_pca:
     s0:
@@ -384,6 +387,7 @@ body_factors:
       model_param_factors:
         skel_param_limit: ${skel_param_limit_factors.f050}
         shape_pca_factors: ${shape_pca_factors}
+        cam_ext_prior: ${camera_ext_prior_factors}
       opt_param_factors: ${opt_pca_param_factors}
   full_pca:
     s0:
@@ -392,6 +396,7 @@ body_factors:
       model_param_factors:
         skel_param_limit: ${skel_param_limit_factors.f050}
         shape_pca_factors: ${shape_pca_factors}
+        cam_ext_prior: ${camera_ext_prior_factors}
       opt_param_factors: ${opt_pca_param_factors}
     s1:
       masked: False
@@ -399,6 +404,7 @@ body_factors:
       model_param_factors:
         skel_param_limit: ${skel_param_limit_factors.f025}
         shape_pca_factors: ${shape_pca_factors}
+        cam_ext_prior: ${camera_ext_prior_factors}
       opt_param_factors: ${opt_pca_param_factors}
     s2:
       masked: False
@@ -406,6 +412,7 @@ body_factors:
       model_param_factors:
         skel_param_limit: ${skel_param_limit_factors.f050}
         shape_pca_factors: ${shape_pca_factors}
+        cam_ext_prior: ${camera_ext_prior_factors}
       opt_param_factors: ${opt_pca_param_factors}
     s3:
       masked: False
@@ -413,6 +420,7 @@ body_factors:
       model_param_factors:
         skel_param_limit: ${skel_param_limit_factors.f100}
         shape_pca_factors: ${shape_pca_factors}
+        cam_ext_prior: ${camera_ext_prior_factors}
       opt_param_factors: ${opt_pca_param_factors}
     s4:
       masked: False
@@ -420,6 +428,7 @@ body_factors:
       model_param_factors:
         skel_param_limit: ${skel_param_limit_factors.f100}
         shape_pca_factors: ${shape_pca_factors}
+        cam_ext_prior: ${camera_ext_prior_factors}
       opt_param_factors: ${opt_pca_param_factors}
     s5:
       masked: False
@@ -427,6 +436,7 @@ body_factors:
       model_param_factors:
         skel_param_limit: ${skel_param_limit_factors.f100}
         shape_pca_factors: ${shape_pca_factors}
+        cam_ext_prior: ${camera_ext_prior_factors}
       opt_param_factors: ${opt_pca_param_factors}
   refine_pca:
     s0:
@@ -435,4 +445,5 @@ body_factors:
       model_param_factors:
         skel_param_limit: ${skel_param_limit_factors.f100}
         shape_pca_factors: ${shape_pca_factors}
+        cam_ext_prior: ${camera_ext_prior_factors}
       opt_param_factors: ${opt_pca_param_factors}
